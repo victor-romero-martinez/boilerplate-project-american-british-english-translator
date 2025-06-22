@@ -59,7 +59,6 @@ class Translator {
 
         // loop title
         for (let [key, value] of Object.entries(titleDic)) {
-            console.log(key, value)
             const regx = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'ig')
 
             translated = translated.replace(regx, `<span class="highlight">${value}</span>`)
