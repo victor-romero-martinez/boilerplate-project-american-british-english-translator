@@ -7,19 +7,12 @@ const britishOnly = require('./british-only.js')
 
 class Translator {
     constructor() {
-        this.americanToBritishDict = {
-            ...americanToBritishSpelling,
-            ...americanOnly,
-        }
+        this.americanToBritishDict = { ...americanToBritishSpelling, ...americanOnly }
+        this.britishToAmericanTitle = { ...britishOnly }
         this.americanToBritishTitle = {}
-        this.britishToAmericanTitle = {}
         this.britishToAmericanDict = {}
 
-        for (const [k, v] of Object.entries(britishOnly)) {
-            this.americanToBritishDict[v] = k
-        }
-
-        for (const [k, v] of Object.entries(this.americanToBritishDict)) {
+        for (const [k, v] of Object.entries(americanToBritishSpelling)) {
             this.britishToAmericanDict[v] = k
         }
 
@@ -42,7 +35,8 @@ class Translator {
      * @param {string} locale 
      */
     translate(text, locale) {
-        let translated = text
+        let translated = text.slice()
+        let plain_tanslation = text
         let dictionary = {}
         let keys = []
         let titleDic = {}
@@ -51,24 +45,30 @@ class Translator {
             dictionary = this.americanToBritishDict
             keys = this.sortedAmericanToBritishKeys
             titleDic = this.americanToBritishTitle
+            translated = translated.replace(/(\d+):(\d+)/g, '$1.$2')
+            plain_tanslation = translated
         } else if (locale === 'british-to-american') {
             dictionary = this.britishToAmericanDict
             keys = this.sortedBritishToAmericanKeys
             titleDic = this.britishToAmericanTitle
+            translated = translated.replace(/(\d+)\.(\d+)/g, '$1:$2')
+            plain_tanslation = translated
         }
-
+        
+        
         // loop title
         for (let [key, value] of Object.entries(titleDic)) {
             const regx = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'ig')
-
+            
             translated = translated.replace(regx, `<span class="highlight">${value}</span>`)
+            plain_tanslation = plain_tanslation.replace(regx, value)
         }
-
+        
         // loop word
         for (let key of keys) {
             const value = dictionary[key]
             const regx = new RegExp(`\\b${key}\\b`, 'ig')
-
+            
             translated = translated.replace(regx, (match) => {
                 if (match[0] === match) {
                     return `<span class="highlight">${value.charAt(0).toUpperCase() + value.slice(1)}</span>`
@@ -76,11 +76,19 @@ class Translator {
 
                 return `<span class="highlight">${value}</span>`
             })
+            
+            plain_tanslation = plain_tanslation.replace(regx, (match) => {
+                if (match[0] === match) {
+                    return value.charAt(0).toUpperCase() + value.slice(1)
+                }
+                
+                return value
+            })
         }
 
         return {
-            text,
-            translation: translated === text ? "Everything looks good to me!" : translated
+            translation: translated === text ? "Everything looks good to me!" : translated,
+            plain_tanslation
         }
     }
 }
