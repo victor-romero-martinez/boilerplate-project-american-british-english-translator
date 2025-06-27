@@ -51,6 +51,8 @@ class Translator {
             keys = this.sortedBritishToAmericanKeys
             titleDic = this.britishToAmericanTitle
             translated = translated.replace(/(\d+)\.(\d+)/g, '$1:$2')
+        } else {
+            return { error: 'Invalid value for locale field', translation: null, plain_tanslation: null}
         }
 
         let plaholderIndex = 0
@@ -92,6 +94,7 @@ class Translator {
         const plain_tanslation = translated.replace(/<span class="highlight">(.*?)<\/span>/g, '$1')
 
         return {
+            error: null,
             translation: translated === text ? "Everything looks good to me!" : translated,
             plain_tanslation
         }
