@@ -45,12 +45,12 @@ class Translator {
             dictionary = this.americanToBritishDict
             keys = this.sortedAmericanToBritishKeys
             titleDic = this.americanToBritishTitle
-            translated = translated.replace(/(\d+):(\d+)/g, '$1.$2')
+            translated = translated.replace(/(\d+):(\d+)/g, '<span class="highlight">$1.$2</span>')
         } else if (locale === 'british-to-american') {
             dictionary = this.britishToAmericanDict
             keys = this.sortedBritishToAmericanKeys
             titleDic = this.britishToAmericanTitle
-            translated = translated.replace(/(\d+)\.(\d+)/g, '$1:$2')
+            translated = translated.replace(/(\d+)\.(\d+)/g, '<span class="highlight">$1:$2</span>')
         } else {
             return { error: 'Invalid value for locale field', translation: null, plain_tanslation: null}
         }
